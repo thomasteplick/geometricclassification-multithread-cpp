@@ -361,55 +361,29 @@ void Geometric::getPlaneMassError(int cls, int axis, int plane, std::queue<doubl
 // compute min square error for all planes in this axis and return
 void Geometric::getAxisMassError(int cls, int axis, std::queue<double>& axisQueue, std::mutex& axismtx)
 {
-	// Maximum number of threads running at any one time
-	constexpr int planesPerBlock = 10;
-	constexpr int nblocks = PlaneMass::planeDim/planesPerBlock;
 	double minSqErr = 0.0;
 
 	// Launch a thread for each plane to compute the square error and create
 	// a synchronized queue to collect the square error.
 	std::queue<double> planeQueue;
 	std::mutex planemtx;
-	std::thread planeThread[planesPerBlock];
 
-/*
 	std::thread planeThread[PlaneMass::planeDim];
 	for (int plane = 0; plane < PlaneMass::planeDim; plane++) {
-		planeThread[plane] = std::thread(&Geometric::getPlaneMassError, this, cls, axis, plane, std::ref(planeQueue), std::ref(planelck));
-	}
-*/
-	for (int block = 0; block < nblocks; block++) {
-		int plane = block*planesPerBlock;
-		for (int step = 0; step < planesPerBlock; step++) {
-			planeThread[step] = std::thread(&Geometric::getPlaneMassError, this, cls, axis, plane, std::ref(planeQueue), std::ref(planemtx));
-			++plane;
-		}
-
-		// Wait for the threads to finish
-		for (std::thread& th : planeThread) {
-			th.join();
-		}
-
-		// loop over planes and get plane mass errors
-		// sum the plane square errors
-		while (!planeQueue.empty()) {
-			minSqErr += planeQueue.front();
-			planeQueue.pop();
-		}
+		planeThread[plane] = std::thread(&Geometric::getPlaneMassError, this, cls, axis, plane, std::ref(planeQueue), std::ref(planemtx));
 	}
 
-/*
 	// Wait for the threads to finish
-	for (auto& th : planeThread) {
+	for (std::thread& th : planeThread) {
 		th.join();
 	}
+
 	// loop over planes and get plane mass errors
 	// sum the plane square errors
 	while (!planeQueue.empty()) {
 		minSqErr += planeQueue.front();
 		planeQueue.pop();
- 	}
-*/
+	}
 
 	std::unique_lock<std::mutex> axislck(axismtx, std::defer_lock);
 
@@ -568,15 +542,8 @@ void Geometric::classifyGeometric()
 			std::mutex axismtx;
 			for (int axis = 0; axis < naxes; axis++) {
 				axisThread[axis] = std::thread(&Geometric::getAxisMassError, this, cls, axis, std::ref(axisQueue), std::ref(axismtx));
-				// wait for this axis thread to finish
-				axisThread[axis].join();
-				// collect the square error in the queue
-				sqerr += axisQueue.front();
-				axisQueue.pop();
 			}
 
-
-			/*
 			// Wait for the threads to finish
 			for (auto& th : axisThread) {
 				th.join();
@@ -587,8 +554,6 @@ void Geometric::classifyGeometric()
 				sqerr += axisQueue.front();
 				axisQueue.pop();
 			}
-			*/
-
 
 			if (sqerr < minSqError) {
 				minSqError = sqerr;

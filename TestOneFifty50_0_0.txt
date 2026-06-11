@@ -1,0 +1,46 @@
+C:\Users\Thoma\eclipse-workspace\MultiThreadGeometricClassification\Debug>MultiThreadGeometricClassification.exe
+Choose Classify Geometric = 1 or Display Geometric = 2:  1
+---------- Geometric Classification Running ----------
+Start local time and date: Wed Jun 10 21:52:31 2026
+
+Enter the number of samples, noise level, and shift, separated by space
+50<=[samples]<= 500, 0<=[noise level]<= 9, [0=false|1=true]
+For example, '50 3 1'
+50 0 0
+You entered: 50 0 0
+Geometric geo constructed, start classifyGeometric
+classifyGeometric, start loop over the samples
+
+**************************************************
+
+leaving classifyGeometric
+tabulateTestResults
+displayTestResults
+
+|======================================================|
+|Class  |Geometric                 |Count  |Correct (%)|
+|=======|==========================|=======|===========|
+|0      |ellipsoidsurface          |2      |100        |
+|1      |ellipsoidsolid            |4      |100        |
+|2      |plane                     |3      |100        |
+|3      |paraboloid                |4      |100        |
+|4      |paraboloidsolid           |3      |100        |
+|5      |cube                      |2      |100        |
+|6      |cone                      |5      |100        |
+|7      |conesolid                 |2      |100        |
+|8      |box                       |2      |100        |
+|9      |hyperbolicparaboloid      |3      |100        |
+|10     |cylindersurface           |3      |100        |
+|11     |cylindersolid             |1      |100        |
+|12     |potentialwell             |2      |100        |
+|13     |cardioidrevolution        |3      |100        |
+|14     |cardioidrevolutionsolid   |3      |100        |
+|15     |lemniscaterevolution      |1      |100        |
+|16     |lemniscaterevolutionsolid |3      |100        |
+|17     |rose4leafrevolution       |2      |100        |
+|18     |rose4leafrevolutionsolid  |2      |100        |
+|------------------------------------------------------|
+|Totals |                          |50     |100        |
+|======================================================|
+
+Finish local time and date: Thu Jun 11 00:33:48 2026
