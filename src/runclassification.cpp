@@ -334,7 +334,7 @@ double Geometric::searchPlaneReferences(int cls, int axis, int plane, int refMas
 }
 
 // get min sq error for this plane
-void Geometric::getPlaneMassError(int cls, int axis, int plane, std::queue<double>& planeQueue, std::unique_lock<std::mutex>& planelck)
+void Geometric::getPlaneMassError(int cls, int axis, int plane, std::queue<double>& planeQueue, std::mutex& planemtx)
 {
 	/*
 		Loop over all geoRefMass planes for this class, axis, and plane.  Call searchPlaneReferences()
@@ -349,6 +349,8 @@ void Geometric::getPlaneMassError(int cls, int axis, int plane, std::queue<doubl
 		}
 	}
 
+	std::unique_lock<std::mutex> planelck(planemtx, std::defer_lock);
+
     // critical section (exclusive access to the planeQueue)
 	planelck.lock();
 	planeQueue.push(minSqErr);
@@ -357,22 +359,46 @@ void Geometric::getPlaneMassError(int cls, int axis, int plane, std::queue<doubl
 }
 
 // compute min square error for all planes in this axis and return
-void Geometric::getAxisMassError(int cls, int axis, std::queue<double>& axisQueue, std::unique_lock<std::mutex>& axislck)
+void Geometric::getAxisMassError(int cls, int axis, std::queue<double>& axisQueue, std::mutex& axismtx)
 {
-	constexpr int blockPlanes = 10;
-	constexpr int block = PlaneMass::planeDim/blockPlanes;
+	// Maximum number of threads running at any one time
+	constexpr int planesPerBlock = 10;
+	constexpr int nblocks = PlaneMass::planeDim/planesPerBlock;
 	double minSqErr = 0.0;
 
 	// Launch a thread for each plane to compute the square error and create
 	// a synchronized queue to collect the square error.
 	std::queue<double> planeQueue;
+	std::mutex planemtx;
+	std::thread planeThread[planesPerBlock];
+
+/*
 	std::thread planeThread[PlaneMass::planeDim];
-	std::mutex mtx;
-	std::unique_lock<std::mutex> planelck(mtx);
 	for (int plane = 0; plane < PlaneMass::planeDim; plane++) {
 		planeThread[plane] = std::thread(&Geometric::getPlaneMassError, this, cls, axis, plane, std::ref(planeQueue), std::ref(planelck));
 	}
+*/
+	for (int block = 0; block < nblocks; block++) {
+		int plane = block*planesPerBlock;
+		for (int step = 0; step < planesPerBlock; step++) {
+			planeThread[step] = std::thread(&Geometric::getPlaneMassError, this, cls, axis, plane, std::ref(planeQueue), std::ref(planemtx));
+			++plane;
+		}
 
+		// Wait for the threads to finish
+		for (std::thread& th : planeThread) {
+			th.join();
+		}
+
+		// loop over planes and get plane mass errors
+		// sum the plane square errors
+		while (!planeQueue.empty()) {
+			minSqErr += planeQueue.front();
+			planeQueue.pop();
+		}
+	}
+
+/*
 	// Wait for the threads to finish
 	for (auto& th : planeThread) {
 		th.join();
@@ -382,7 +408,10 @@ void Geometric::getAxisMassError(int cls, int axis, std::queue<double>& axisQueu
 	while (!planeQueue.empty()) {
 		minSqErr += planeQueue.front();
 		planeQueue.pop();
-	}
+ 	}
+*/
+
+	std::unique_lock<std::mutex> axislck(axismtx, std::defer_lock);
 
     // critical section (exclusive access to the axisQueue)
 	axislck.lock();
@@ -536,16 +565,16 @@ void Geometric::classifyGeometric()
 			// a synchronized queue to collect the square error.
 			std::queue<double> axisQueue;
 			std::thread axisThread[naxes];
-			std::mutex mtx;
-			std::unique_lock<std::mutex> axislck(mtx);
+			std::mutex axismtx;
 			for (int axis = 0; axis < naxes; axis++) {
-				axisThread[axis] = std::thread(&Geometric::getAxisMassError, this, cls, axis, std::ref(axisQueue), std::ref(axislck));
+				axisThread[axis] = std::thread(&Geometric::getAxisMassError, this, cls, axis, std::ref(axisQueue), std::ref(axismtx));
 				// wait for this axis thread to finish
 				axisThread[axis].join();
 				// collect the square error in the queue
 				sqerr += axisQueue.front();
 				axisQueue.pop();
 			}
+
 
 			/*
 			// Wait for the threads to finish
@@ -559,6 +588,7 @@ void Geometric::classifyGeometric()
 				axisQueue.pop();
 			}
 			*/
+
 
 			if (sqerr < minSqError) {
 				minSqError = sqerr;

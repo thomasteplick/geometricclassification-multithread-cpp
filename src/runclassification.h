@@ -50,8 +50,8 @@ class Geometric
 	int totalCount;    // total test samples
 	int totalCorrect; // total correct classification
 	int density[PlaneMass::planeDim][PlaneMass::planeDim][PlaneMass::planeDim]; // geometric object 3D densities
-	void getPlaneMassError(int cls, int axis, int plane, std::queue<double>& planeQueue, std::unique_lock<std::mutex>& planelck);
-	void getAxisMassError(int cls, int axis, std::queue<double>& axisQueue, std::unique_lock<std::mutex>& axislck);
+	void getPlaneMassError(int cls, int axis, int plane, std::queue<double>& planeQueue, std::mutex& planemtx);
+	void getAxisMassError(int cls, int axis, std::queue<double>& axisQueue, std::mutex& axismtx);
 	double searchPlaneReferences(int cls, int axis, int plane, int refMassPlane);
 public:
 	static const int naxes = 3;     // number of axes in Cartesian coordinate system
