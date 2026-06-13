@@ -1115,7 +1115,7 @@ void GeoObject::createTorusSolid()
 				double zstep = double(k*std::sin(theta))/nzsteps;
 				double z = 0.0;
 				for (int m = 0; m <= nzsteps; m++) {
-					// center is the most dense, decreasing as you move away from center
+					// tube center is the most dense, decreasing as you move away from tube center
 					density2 = char(black * (1.0 - std::sqrt(z*z+kcostheta*kcostheta)/norm));
 					density[int(z)+z1][int(x)+x1][int(y)+y1] = density2;
 					density[int(z)+z1][int(x)+x1][int(-y)+y1] = density2;

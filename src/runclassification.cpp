@@ -3,13 +3,17 @@
 // Author      : Tom Teplick
 // Version     :
 // Copyright   : ThomasTeplick
-// Description : GeometricClassification in C++, Ansi-style
+// Description : GeometricClassification in C++ with multi-threading, Ansi-style
 
 // Test the display by defining macro TEST_DISPLAY in Project, Properties, C/C++ Build,
 // Settings, GCC C++ Compiler, Preprocessor
 // Add, Preprocessor Macro, TEST_DISPLAY.
 
-// Developed using Eclipse C/C++ IDE 2025-06, GCC C++ compiler, mingw C++ linker.
+// Developed using Eclipse C/C++ IDE 2025-06, GCC C++ compiler, MINGW C++ linker.
+
+// Speed up the program by using at least 154 threads with a synchronized queue FIFOs.
+// The queues employ mutexes to avoid race conditions.  The speed up from the serial
+// implementation is about 2-3 times faster.
 //============================================================================
 
 #include <iostream>
@@ -535,8 +539,8 @@ void Geometric::classifyGeometric()
 			// find minimum mass error over rowsums and colsums for all axes and planes
 			// use geoRefDims for shifting the object inside the planes
 			double sqerr = 0.0;
-			// Launch a thread for each plane to compute the square error and create
-			// a synchronized queue to collect the square error.
+			// Launch a thread for each axis and plane to compute the square error and create
+			// synchronized queues to collect the square errors.
 			std::queue<double> axisQueue;
 			std::thread axisThread[naxes];
 			std::mutex axismtx;
