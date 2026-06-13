@@ -41,7 +41,8 @@ const char* geometricObjects[] = {
 	  "lemniscaterevolution",
 	  "lemniscaterevolutionsolid",
 	  "rose4leafrevolution",
-	  "rose4leafrevolutionsolid"
+	  "rose4leafrevolutionsolid",
+	  "torussolid",
 };
 
 // add noise to the geometric object's density and shift the location of the geometric object
@@ -102,9 +103,9 @@ void GeoObject::addNoiseShift()
 	if (std::rand()%2 > 0)
 		signk = -1;
 
-	int ishift = signi * std::rand()%GeoObject::planeDim/4;
-	int jshift = signj * std::rand()%GeoObject::planeDim/4;
-	int kshift = signk * std::rand()%GeoObject::planeDim/4;
+	int ishift = signi * std::rand()%GeoObject::planeDim/6;
+	int jshift = signj * std::rand()%GeoObject::planeDim/6;
+	int kshift = signk * std::rand()%GeoObject::planeDim/6;
 
 	int deltaI = 0;
 	int deltaJ = 0;
@@ -1068,6 +1069,73 @@ void GeoObject::createParaboloidSolid()
 	}
 }
 
+// Create a solid torus (doughnut, bagel, life buoy) with aspect ratio 2:1 (R/r)
+// The density is inversely proportional to the distance from the r center.
+void GeoObject::createTorusSolid()
+{
+	/* The major radius R is the distance from the center of the tube
+	 * to the center of the torus and the minor radius r is the radius
+	 * of the tube.  A torus is different than a solid torus, which
+	 * is formed by rotating a disk, rather than a circle, around
+	 * an axis. A solid torus is a torus plus the volume inside the torus.
+	 * Real-world objects that approximate a solid torus include O-rings,
+	 * non-inflatable lifebuoys, ring doughnuts, and bagels.
+	 */
+	// center (x1,y1,z1)
+	// x(theta,phi) = (R + r*cos(theta))*cos(phi)
+	// y(theta,phi) = (R + r*cos(theta))*sin(phi)
+	// z(theta,phi) = r*sin(theta)
+
+	double black = 9.0;
+	int x1 = planeDim / 2;
+	int y1 = planeDim / 2;
+	int z1 = planeDim / 2;
+	// assign radii, aspect ratio 2:1: R/r = 2/1
+	const int R = x1/2;
+	const int r = R/2;
+	const int nzsteps = 10;
+	char density2;
+	// one degree resolution
+	double del =  pi / 180.0;
+	double norm = r*r;
+
+	// loop, 0<=phi<360 using symmetry
+	double phi = 0;
+	for (int i = 0; i < 180; i++) {
+		// loop, 0<=theta<360 using symmetry
+		double theta = 0.0;
+		for (int j = 0; j < 180; j++) {
+			// loop to fill the disk with densities, 0<=k<=r
+			for (int k = 0; k <= r; k++) {
+				double kcostheta = k*std::cos(theta);
+				double x = (R + kcostheta)*std::cos(phi);
+				double y = (R + kcostheta)*std::sin(phi);
+
+				// loop to fill the orthogonal axis plane not dependent on phi
+				double zstep = double(k*std::sin(theta))/nzsteps;
+				double z = 0.0;
+				for (int m = 0; m <= nzsteps; m++) {
+					// center is the most dense, decreasing as you move away from center
+					density2 = char(black * (1.0 - std::sqrt(z*z+kcostheta*kcostheta)/norm));
+					density[int(z)+z1][int(x)+x1][int(y)+y1] = density2;
+					density[int(z)+z1][int(x)+x1][int(-y)+y1] = density2;
+					density[int(-z)+z1][int(x)+x1][int(y)+y1] = density2;
+					density[int(-z)+z1][int(x)+x1][int(-y)+y1] = density2;
+					z += zstep;
+				}
+			}
+			theta += del;
+		}
+		phi += del;
+	}
+
+	// add noise to this geometric object and shift its location
+	if (shift) {
+		// find maximum shift and choose random value in that range
+		addNoiseShift();
+	}
+}
+
 // create geometric references consisting of plane row/column mass sums and plane dimensions
 void GeoObject::createGeometricReferences()
 {
@@ -1099,6 +1167,7 @@ void GeoObject::createGeometricReferences()
 		&GeoObject::createLemniscateRevolutionSolid,
 		&GeoObject::createRose4LeafRevolution,
 		&GeoObject::createRose4LeafRevolutionSolid,
+		&GeoObject::createTorusSolid,
 	};
 
 	// create geometric object reference dimension file
@@ -1519,6 +1588,9 @@ void GeoObject::CreateObject(int geometricObject, int nl, bool sh)
 		createRose4LeafRevolutionSolid();
 		break;
 	case 19:
+		createTorusSolid();
+		break;
+	case 20:
 		createGeometricReferences();
 		break;
 	default:

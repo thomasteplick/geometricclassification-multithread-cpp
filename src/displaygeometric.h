@@ -17,7 +17,7 @@ class GeoDisplay {
 
 	void displayPlanes();
 public:
-	static const int nclasses = 19;  // number of geometric objects
+	static const int nclasses = 20;  // number of geometric objects
     static const int planeDim=50;  // number of planes in each axis
 	static const int naxes = 3;     // number of axes in Cartesian coordinate system
     static const std::string dataDir;

@@ -25,7 +25,7 @@ void GeoDisplay::displayClass()
 {
 	// Get the class, axis, and planes in a loop for continuous evaluation
 	std::cout << "Enter class, axis, start plane, and stop plane, separated by spaces\n";
-	std::cout << "0<=[class]<19, 0<=[axis]<=2, 0<=[start plane]<50, 0<=[stop plane]<50: ";
+	std::cout << "0<=[class]<20, 0<=[axis]<=2, 0<=[start plane]<50, 0<=[stop plane]<50: ";
 	std::string response = "";
 
     // Create Geometric Object with fixed noise level and no shift

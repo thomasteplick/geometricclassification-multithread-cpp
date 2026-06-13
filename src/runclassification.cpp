@@ -437,7 +437,7 @@ Geometric::Geometric()
 	    GeoObject geobj;
 
 		// create geometric references
-		geobj.CreateObject(19, 0, false);
+		geobj.CreateObject(20, 0, false);
 	}
 	if (!fdim.is_open()) {
 		fdim.open((dataDir+geometricrefdims).c_str(), std::fstream::in);

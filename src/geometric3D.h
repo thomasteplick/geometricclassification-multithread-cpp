@@ -40,6 +40,7 @@ class GeoObject
 	void createParaboloid();
 	void createParaboloidSolid();
 	void createGeometricReferences();
+	void createTorusSolid();
 public:
     static const int planeDim=50;
     static const std::string geometricobject;

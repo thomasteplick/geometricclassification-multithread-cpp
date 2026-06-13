@@ -36,7 +36,7 @@ struct PlaneMass
 // classification results
 struct Stats
 {
-	static const int nclasses = 19;  // number of geometric classes
+	static const int nclasses = 20;  // number of geometric classes
 	int correct[nclasses]; // % correct classifcation
 	int classCount[nclasses]; // #samples in each class
 };
