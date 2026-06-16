@@ -1,5 +1,5 @@
 <h3> 
-Classification of Three-dimensional Geometric Objects using C++ and Multi-Threading
+Classification of Three-dimensional Geometric Objects using C++ and Multithreading
 </h3>
 <p>
 This program is written in C++11 and used Eclipse CDE 2025-06 IDE with GCC compiler. 
@@ -228,3 +228,16 @@ displayTestResults
 
 Finish local time and date: Tue Jun 16 12:33:32 2026
 </pre>
+
+<h4>Display Geometric, paraboloid solid, axis 1, plane 25</h4>
+<img width="988" height="997" alt="image" src="https://github.com/user-attachments/assets/41c6b943-d1c9-4e90-b0f8-322def2b4c53" />
+<h4>Display Geometric, paraboloid solid, axis 0, plane 25</h4>
+<img width="1058" height="970" alt="image" src="https://github.com/user-attachments/assets/7922db92-0d9a-4bcf-98ea-6f8c3c29ec90" />
+<h4>Display Geometric, lemniscaterevolutionsolid, axis 0, plane 25</h4>
+<img width="919" height="988" alt="image" src="https://github.com/user-attachments/assets/80a3dc5a-11df-4886-8fd8-12701e570caa" />
+<h4>Display Geometric, torus solid, axis 0, plane 25</h4>
+<img width="942" height="988" alt="image" src="https://github.com/user-attachments/assets/0b8fe81c-ab29-4885-8739-28516f4cf0c2" />
+<h4>Display Geometric, torus solid, axis 1, plane 26</h4>
+<img width="926" height="986" alt="image" src="https://github.com/user-attachments/assets/e4f25322-5675-4a01-8e38-d862d4ae5d5a" />
+<h4>Display Geometric, torus solid, axis 1, plane 30</h4>
+<img width="922" height="973" alt="image" src="https://github.com/user-attachments/assets/69b9faba-b995-4773-98e9-8f55500cedd1" />
