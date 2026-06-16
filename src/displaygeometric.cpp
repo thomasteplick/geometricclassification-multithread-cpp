@@ -65,7 +65,7 @@ void GeoDisplay::displayClass()
 		displayPlanes();
 
 		std::cout << "Enter class, axis, start plane, and stop plane, separated by spaces\n";
-		std::cout << "0<=[class]<19, 0<=[axis]<=2, 0<=[start plane]<50, 0<=[stop plane]<50: ";
+		std::cout << "0<=[class]<20, 0<=[axis]<=2, 0<=[start plane]<50, 0<=[stop plane]<50: ";
 
 	}
 }
@@ -73,7 +73,8 @@ void GeoDisplay::displayClass()
 // display the geometric reference planes
 void GeoDisplay::displayPlanes()
 {
-	//COLORS LIST
+	//COLORS LIST foreground 1-15
+	//0: Black
 	//1: Blue
 	//2: Green
 	//3: Cyan
@@ -83,28 +84,37 @@ void GeoDisplay::displayPlanes()
 	//7: Default white
 	//8: Gray/Grey
 	//9: Bright blue
-	//10: Brigth green
+	//10: Bright green
 	//11: Bright cyan
 	//12: Bright red
 	//13: Pink/Magenta
 	//14: Yellow
 	//15: Bright white
 	//Numbers after 15 include background colors
+	//16: background blue  0x10
+	//32: background green 0x20
+	//48: background cyan  0x30
+	//64: background red   0x40
+	//80: background purple 0x50
+	//96: background brown 0x60
+	//108: background white 0x70
+	//124: background gray 0x80
 
 	// map geometric density to windows color attribute
 
 	// colors not in wincon.h
 	enum Color : int {
 		FOREGROUND_BLACK=0,
-		FOREGROUND_YELLOW=14,
-		FOREGROUND_ORANGE=12,
 		FOREGROUND_CYAN=3,
-		FOREGROUND_BROWN=6,
 		FOREGROUND_PURPLE=5,
+		FOREGROUND_BROWN=6,
+		FOREGROUND_WHITE=7,
 		FOREGROUND_GRAY=8,
+		FOREGROUND_ORANGE=12,
+		FOREGROUND_YELLOW=14,
 	};
 
-	std::vector<int> density2colorattr = {
+	std::vector<int> density2FGcolor = {
 		FOREGROUND_YELLOW,
 		FOREGROUND_GRAY,
 		FOREGROUND_ORANGE,
@@ -114,13 +124,26 @@ void GeoDisplay::displayPlanes()
 		FOREGROUND_RED,
 		FOREGROUND_PURPLE,
 		FOREGROUND_BROWN,
-		FOREGROUND_BLACK,
+		FOREGROUND_WHITE,
 	};
 
-	  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	  CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
-	  // Save the current text colors.
-	  GetConsoleScreenBufferInfo(hConsole, &csbiInfo);
+	std::vector<int> density2BGcolor = {
+		FOREGROUND_YELLOW << 4,
+		FOREGROUND_GRAY << 4,
+		FOREGROUND_ORANGE << 4,
+		FOREGROUND_CYAN << 4,
+		FOREGROUND_GREEN << 4,
+		FOREGROUND_BLUE << 4,
+		FOREGROUND_RED << 4,
+		FOREGROUND_PURPLE << 4,
+		FOREGROUND_BROWN  << 4,
+		FOREGROUND_WHITE << 4,
+	};
+
+	 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	 CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+	 // Save the current text colors.
+	 GetConsoleScreenBufferInfo(hConsole, &csbiInfo);
 
 	// read in the geometric object
 	// Open the geometric reference file containing the densities
@@ -150,9 +173,11 @@ void GeoDisplay::displayPlanes()
 		for (int i = startPlane; i <= stopPlane; i++) {
 			for (int j = 0; j < planeDim; j++) {
 				for (int k = 0; k < planeDim; k++) {
-					SetConsoleTextAttribute(hConsole, density2colorattr[density[i][j][k]]);
-					std::cout << density[i][j][k] << " ";
+					SetConsoleTextAttribute(hConsole, density2FGcolor[density[i][j][k]] | density2BGcolor[density[i][j][k]]);
+					std::cout << "  ";
 				}
+				// Restore default foreground and background
+				SetConsoleTextAttribute(hConsole, FOREGROUND_BLACK);
 				std::cout << std::endl;
 			}
 			// Sleep for two seconds
@@ -166,9 +191,11 @@ void GeoDisplay::displayPlanes()
 		for (int j = startPlane; j <= stopPlane; j++) {
 			for (int i = 0; i < planeDim; i++) {
 				for (int k = 0; k < planeDim; k++) {
-					SetConsoleTextAttribute(hConsole, density2colorattr[density[i][j][k]]);
-					std::cout << density[i][j][k] << " ";
+					SetConsoleTextAttribute(hConsole, density2FGcolor[density[i][j][k]] | density2BGcolor[density[i][j][k]]);
+					std::cout << "  ";
 				}
+				// Restore default foreground and background
+				SetConsoleTextAttribute(hConsole, FOREGROUND_BLACK);
 				std::cout << std::endl;
 			}
 			// Sleep for two seconds
@@ -182,9 +209,11 @@ void GeoDisplay::displayPlanes()
 		for (int k = startPlane; k <= stopPlane; k++) {
 			for (int i = 0; i < planeDim; i++) {
 				for (int j = 0; j < planeDim; j++) {
-					SetConsoleTextAttribute(hConsole, density2colorattr[density[i][j][k]]);
-					std::cout << density[i][j][k] << " ";
+					SetConsoleTextAttribute(hConsole, density2FGcolor[density[i][j][k]] | density2BGcolor[density[i][j][k]]);
+					std::cout << "  ";
 				}
+				// Restore default foreground and background
+				SetConsoleTextAttribute(hConsole, FOREGROUND_BLACK);
 				std::cout << std::endl;
 			}
 			// Sleep for two seconds
@@ -197,9 +226,9 @@ void GeoDisplay::displayPlanes()
 		throw std::runtime_error("GeoDisplay::displayPlanes() invalid axis");
 	}
 
-	  WORD wOldColorAttrs = csbiInfo.wAttributes;
-	  // Restore the original text colors.
-	  SetConsoleTextAttribute(hConsole, wOldColorAttrs);
+	WORD wOldColorAttrs = csbiInfo.wAttributes;
+	// Restore the original text colors.
+	SetConsoleTextAttribute(hConsole, wOldColorAttrs);
 }
 
 

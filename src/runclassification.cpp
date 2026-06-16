@@ -12,7 +12,7 @@
 // Developed using Eclipse C/C++ IDE 2025-06, GCC C++ compiler, MINGW C++ linker.
 
 // Speed up the program by using at least 154 threads with a synchronized queue FIFOs.
-// The queues employ mutexes to avoid race conditions.  The speed up from the serial
+// The queues employ mutexes to avoid race conditions.  The speed up from the sequential
 // implementation is about 2-3 times faster.
 //============================================================================
 

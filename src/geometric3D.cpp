@@ -103,9 +103,9 @@ void GeoObject::addNoiseShift()
 	if (std::rand()%2 > 0)
 		signk = -1;
 
-	int ishift = signi * std::rand()%GeoObject::planeDim/6;
-	int jshift = signj * std::rand()%GeoObject::planeDim/6;
-	int kshift = signk * std::rand()%GeoObject::planeDim/6;
+	int ishift = signi * std::rand()%GeoObject::planeDim/4;
+	int jshift = signj * std::rand()%GeoObject::planeDim/4;
+	int kshift = signk * std::rand()%GeoObject::planeDim/4;
 
 	int deltaI = 0;
 	int deltaJ = 0;
