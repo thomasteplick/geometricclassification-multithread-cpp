@@ -726,6 +726,7 @@ int main()
 		test_display();
 #else
 		int choice = 0;
+		std::cout << "threads available = " << std::thread::hardware_concurrency() << std::endl;
 		// select classify or display geometric objects
 		std::cout << "Choose Classify Geometric = 1 or Display Geometric = 2:  ";
 		std::cin >> choice;
