@@ -74,6 +74,7 @@ single-thread implementation.
 
 <pre>
 C:\Users\Thoma\eclipse-workspace\MultiThreadGeometricClassification\Debug>MultiThreadGeometricClassification.exe
+threads available = 12
 Choose Classify Geometric = 1 or Display Geometric = 2:  1
 ---------- Geometric Classification Running ----------
 Start local time and date: Sun Jun 14 09:39:44 2026
@@ -127,6 +128,7 @@ Finish local time and date: Sun Jun 14 16:03:40 2026
 
 <pre>
 C:\Users\Thoma\eclipse-workspace\MultiThreadGeometricClassification\Debug>MultiThreadGeometricClassification.exe
+threads available = 12
 Choose Classify Geometric = 1 or Display Geometric = 2:  1
 ---------- Geometric Classification Running ----------
 Start local time and date: Mon Jun 15 12:28:42 2026
@@ -180,6 +182,7 @@ Finish local time and date: Mon Jun 15 18:11:38 2026
 
 <pre>
 C:\Users\Thoma\eclipse-workspace\MultiThreadGeometricClassification\Debug>MultiThreadGeometricClassification.exe
+threads available = 12
 Choose Classify Geometric = 1 or Display Geometric = 2:  1
 ---------- Geometric Classification Running ----------
 Start local time and date: Tue Jun 16 06:29:15 2026
