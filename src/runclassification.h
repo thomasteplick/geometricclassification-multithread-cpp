@@ -41,6 +41,10 @@ struct Stats
 	int classCount[nclasses]; // #samples in each class
 };
 
+void handleGeometricClassification();
+
+void handleGeometricDisplay();
+
 class Geometric
 {
 	int nsamples;            // #samples to classify
